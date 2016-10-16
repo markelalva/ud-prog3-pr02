@@ -17,6 +17,7 @@ public class VentanaJuego extends JFrame {
 	MundoJuego miMundo;        // Mundo del juego
 	CocheJuego miCoche;        // Coche del juego
 	MiRunnable miHilo = null;  // Hilo del bucle principal de juego	
+	boolean teclas [] = new boolean[4]; // Array para las teclas.
 
 	/** Constructor de la ventana de juego. Crea y devuelve la ventana inicializada
 	 * sin coches dentro
@@ -80,22 +81,54 @@ public class VentanaJuego extends JFrame {
 			public void keyPressed(KeyEvent e) {
 				switch (e.getKeyCode()) {
 					case KeyEvent.VK_UP: {
-						miCoche.acelera( +5, 1 );
+					
+						teclas[0] = true;
+						System.out.println("Ha pulsado la tecla de subir");
 						break;
 					}
 					case KeyEvent.VK_DOWN: {
-						miCoche.acelera( -5, 1 );
+				
+						teclas[1] = true;
 						break;
 					}
 					case KeyEvent.VK_LEFT: {
-						miCoche.gira( +10 );
+						teclas[2] = true;
+						System.out.println("Ha pulsado la tecla de girar a la izquierda");
 						break;
 					}
 					case KeyEvent.VK_RIGHT: {
-						miCoche.gira( -10 );
+						teclas[3] = true;
 						break;
 					}
 				}
+			}
+			
+			public void keyReleased(KeyEvent e) {
+				switch (e.getKeyCode()){
+				
+				case KeyEvent.VK_UP: {
+					teclas[0] = false;
+					break;
+					
+				}
+				case KeyEvent.VK_DOWN: {
+					teclas[1] = false;
+					break;
+					
+				}
+				case KeyEvent.VK_LEFT: {
+					teclas[2] = false;
+					break;
+					
+				}
+				case KeyEvent.VK_RIGHT: {
+					teclas[3] = false;
+					break;
+					
+				}
+				}
+				
+				
 			}
 		});
 		pPrincipal.setFocusable(true);
@@ -152,6 +185,20 @@ public class VentanaJuego extends JFrame {
 			// Bucle principal forever hasta que se pare el juego...
 			while (sigo) {
 				// Mover coche
+				if (teclas[0] ==true){
+					miCoche.acelera(10, 1);
+					
+				}
+				else if (teclas[1]== true){
+					miCoche.acelera(-10, 1);
+				}
+				else if (teclas [2] == true){
+			
+					miCoche.gira(+10);
+				}
+				else if (teclas[3] == true){
+					miCoche.gira(-10);
+				}
 				miCoche.mueve( 0.040 );
 				// Chequear choques
 				// (se comprueba tanto X como Y porque podría a la vez chocar en las dos direcciones (esquinas)
