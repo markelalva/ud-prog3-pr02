@@ -120,31 +120,44 @@ public class Coche {
 		setPosY(posY + MundoJuego.calcMovtoY(miVelocidad, miDireccionActual, tiempoDeMovimiento));
 	}
 
-	public double fuerzaAceleracionAdelante() {
-		if (miVelocidad <= -150)
-			return FUERZA_BASE_ADELANTE;
-		else if (miVelocidad <= 0)
-			return FUERZA_BASE_ADELANTE * (-miVelocidad / 150 * 0.5 + 0.5);
-		else if (miVelocidad <= 250)
-			return FUERZA_BASE_ADELANTE * (miVelocidad / 250 * 0.5 + 0.5);
-		else if (miVelocidad <= 750)
-			return FUERZA_BASE_ADELANTE;
-		else
-			return FUERZA_BASE_ADELANTE * (-(miVelocidad - 1000) / 250);
-	}
-	
-	public double fuerzaAceleracionAtras() {
-		if (miVelocidad <= -350D)
-			return FUERZA_BASE_ATRAS * ((miVelocidad + 500.0D)/150.0D);
-		else if (miVelocidad <= -200.0D)
-			return FUERZA_BASE_ATRAS;
-		else if (miVelocidad <= 0.0D)
-			return FUERZA_BASE_ATRAS * (miVelocidad / 200.0D * 0.7D + 0.3D);
-		else if (miVelocidad <= 250.0D)
-			return FUERZA_BASE_ATRAS * (miVelocidad / 250.0D * 0.55D + 0.3D);
-		else
-			return 850.0D;
-	}
+
+	  public double fuerzaAceleracionAdelante()
+	  {
+	    if (this.miVelocidad <= -150.0D) {
+	      return 2000.0D;
+	    }
+	    if (this.miVelocidad <= 0.0D) {
+	      return 2000.0D * (-this.miVelocidad / 150.0D * 0.5D + 0.5D);
+	    }
+	    if (this.miVelocidad <= 250.0D) {
+	      return 2000.0D * (this.miVelocidad / 250.0D * 0.5D + 0.5D);
+	    }
+	    if (this.miVelocidad <= 250.0D) {
+	      return 2000.0D * (this.miVelocidad / 250.0D * 0.5D + 0.5D);
+	    }
+	    if (this.miVelocidad <= 750.0D) {
+	      return 2000.0D;
+	    }
+	    return 2000.0D * (-(this.miVelocidad - 1000.0D) / 250.0D);
+	  }
+	  
+	  public double fuerzaAceleracionAtras()
+	  {
+	    if (this.miVelocidad <= -350.0D) {
+	      return 1000.0D * ((this.miVelocidad + 500.0D) / 150.0D);
+	    }
+	    if (this.miVelocidad <= -200.0D) {
+	      return 1000.0D;
+	    }
+	    if (this.miVelocidad <= 0.0D) {
+	      return 1000.0D * (-this.miVelocidad / 200.0D * 0.7D + 0.3D);
+	    }
+	    if (this.miVelocidad <= 250.0D) {
+	      return 1000.0D * (this.miVelocidad / 250.0D * 0.55D + 0.3D);
+	    }
+	    return 850.0D;
+	  }
+	  
 
 	@Override
 	public String toString() {

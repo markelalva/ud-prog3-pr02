@@ -83,7 +83,6 @@ public class VentanaJuego extends JFrame {
 					case KeyEvent.VK_UP: {
 					
 						teclas[0] = true;
-						System.out.println("Ha pulsado la tecla de subir");
 						break;
 					}
 					case KeyEvent.VK_DOWN: {
@@ -93,7 +92,6 @@ public class VentanaJuego extends JFrame {
 					}
 					case KeyEvent.VK_LEFT: {
 						teclas[2] = true;
-						System.out.println("Ha pulsado la tecla de girar a la izquierda");
 						break;
 					}
 					case KeyEvent.VK_RIGHT: {
@@ -182,17 +180,21 @@ public class VentanaJuego extends JFrame {
 		boolean sigo = true;
 		@Override
 		public void run() {
+			 
 			// Bucle principal forever hasta que se pare el juego...
 			while (sigo) {
+				 double fuerzaAceleracion = 0.0D;
 				// Mover coche
-				if (teclas[0] ==true){
-					miCoche.acelera(10, 1);
+				if (teclas[0] == true){
+					fuerzaAceleracion = VentanaJuego.this.miCoche.fuerzaAceleracionAdelante();
+					System.out.println(fuerzaAceleracion);
 					
 				}
 				else if (teclas[1]== true){
-					miCoche.acelera(-10, 1);
+					 fuerzaAceleracion = -VentanaJuego.this.miCoche.fuerzaAceleracionAtras();
 				}
-				else if (teclas [2] == true){
+				 MundoJuego.aplicarFuerza(fuerzaAceleracion, VentanaJuego.this.miCoche);
+				if (teclas [2] == true){
 			
 					miCoche.gira(+10);
 				}
@@ -206,6 +208,8 @@ public class VentanaJuego extends JFrame {
 					miMundo.rebotaHorizontal(miCoche);
 				if (miMundo.hayChoqueVertical(miCoche)) // Espejo vertical si choca en Y
 					miMundo.rebotaVertical(miCoche);
+				
+				miMundo.creaEstrella();
 				// Dormir el hilo 40 milisegundos
 				try {
 					Thread.sleep( 40 );

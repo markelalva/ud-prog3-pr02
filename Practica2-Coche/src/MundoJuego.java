@@ -1,5 +1,8 @@
 
 
+import java.util.ArrayList;
+import java.util.Random;
+
 import javax.swing.JPanel;
 
 /** "Mundo" del juego del coche.
@@ -11,6 +14,12 @@ import javax.swing.JPanel;
 public class MundoJuego {
 	private JPanel panel;  // panel visual del juego
 	CocheJuego miCoche;    // Coche del juego
+	public ArrayList<JLabelEstrella> Estrellas = new ArrayList<JLabelEstrella>();
+	public Random r;
+	public static final double TIEMPO_ENTRE_ESTRELLAS = 1200L;
+	private static long UltimaEstrella = 0L;
+
+	
 	
 	/** Construye un mundo de juego
 	 * @param panel	Panel visual del juego
@@ -29,6 +38,7 @@ public class MundoJuego {
 		miCoche.setPosicion( posX, posY );
 		panel.add( miCoche.getGrafico() );  // Añade al panel visual
 		miCoche.getGrafico().repaint();  // Refresca el dibujado del coche
+		r = new Random();
 	}
 	
 	/** Devuelve el coche del mundo
@@ -136,6 +146,43 @@ public class MundoJuego {
 		 }
 		 
 	
+		 
+	
 	}
+	public void creaEstrella(){
+		if (System.currentTimeMillis() - UltimaEstrella > TIEMPO_ENTRE_ESTRELLAS){
+			JLabelEstrella e = new JLabelEstrella();
+			e.setLocation(r.nextInt(this.panel.getWidth() - 40), 
+			 r.nextInt(this.panel.getHeight() - 40));
+			this.panel.add(e);
+			this.panel.repaint();
+			Estrellas.add(e);
+			UltimaEstrella = System.currentTimeMillis();
+		
+		}
+	}
+		
+	public int quitayRotaEstrellas(long maxTiempo){
+		int estrellasquitadas =0;
+		for (int i =0; i<Estrellas.size(); i++){
+			if ((Estrellas.get(i).hora - System.currentTimeMillis()) > maxTiempo){
+				this.panel.remove(Estrellas.get(i));
+				this.panel.repaint();
+				Estrellas.remove(i);
+				estrellasquitadas++;
+			}
+			else{
+				Estrellas.get(i).setGiro(10D);
+			}
+		}
+		return estrellasquitadas;
+	}
+		
+		
+		
+		
+		
+		
+	
 	
 }
