@@ -18,6 +18,7 @@ public class MundoJuego {
 	public Random r;
 	public static final double TIEMPO_ENTRE_ESTRELLAS = 1200L;
 	private static long UltimaEstrella = 0L;
+	public int estrellasperdidas =0;
 
 	
 	
@@ -163,20 +164,59 @@ public class MundoJuego {
 	}
 		
 	public int quitayRotaEstrellas(long maxTiempo){
-		int estrellasquitadas =0;
-		for (int i =0; i<Estrellas.size(); i++){
-			if ((Estrellas.get(i).hora - System.currentTimeMillis()) > maxTiempo){
-				this.panel.remove(Estrellas.get(i));
+		
+		double tiempoactual = 0;
+		//Tenemos que hacer desde la ultima posicion a la primera.
+		for (int i =Estrellas.size() -1; i>-1; i--){
+			JLabelEstrella e = Estrellas.get(i);
+			tiempoactual = System.currentTimeMillis();
+			if ((tiempoactual - e.hora) > maxTiempo){
+				this.panel.remove(e);
 				this.panel.repaint();
 				Estrellas.remove(i);
-				estrellasquitadas++;
+				estrellasperdidas++;
 			}
 			else{
-				Estrellas.get(i).setGiro(10D);
+				Estrellas.get(i).addGiro(10D);
+				Estrellas.get(i).repaint();
 			}
 		}
-		return estrellasquitadas;
+		return estrellasperdidas;
+		
 	}
+	
+	public boolean Comprobar(){
+		if (estrellasperdidas >9){
+			return false;
+		}
+		else
+			return true;
+	}
+	//Con este metodo calculamos si hay una estrella en la posicion actual del coche.
+	 private boolean chocaCocheConEstrella(JLabelEstrella est)
+	  {
+	    double distX = est.getX() + 20 - this.miCoche.getPosX() - 50.0D;
+	    double distY = est.getY() + 20 - this.miCoche.getPosY() - 50.0D;
+	    double dist = Math.sqrt(distX * distX + distY * distY);
+	    return dist <= 52.0D;
+	  }
+	
+	 //Metodo para cmprobar los choques
+	public int ComprobarChoques(){
+		int numerodeChoques =0;
+		for (int i =0; i<Estrellas.size(); i++){
+		if (chocaCocheConEstrella(Estrellas.get(i))){
+			numerodeChoques++;
+			this.panel.remove(Estrellas.get(i));
+			Estrellas.remove(i);
+		
+			
+		}
+		
+		
+		
+	}
+		return numerodeChoques;
 		
 		
 		
@@ -185,4 +225,5 @@ public class MundoJuego {
 		
 	
 	
+}
 }

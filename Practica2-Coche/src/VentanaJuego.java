@@ -6,6 +6,8 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
+import org.omg.Messaging.SyncScopeHelper;
+
 /** Clase principal de minijuego de coche para Práctica 02 - Prog III
  * Ventana del minijuego.
  * @author Andoni Eguíluz
@@ -16,64 +18,35 @@ public class VentanaJuego extends JFrame {
 	JPanel pPrincipal;         // Panel del juego (layout nulo)
 	MundoJuego miMundo;        // Mundo del juego
 	CocheJuego miCoche;        // Coche del juego
+	private JLabel Mensaje;
 	MiRunnable miHilo = null;  // Hilo del bucle principal de juego	
 	boolean teclas [] = new boolean[4]; // Array para las teclas.
+	public int estrellasquitadas =0;
+	
+	
 
 	/** Constructor de la ventana de juego. Crea y devuelve la ventana inicializada
 	 * sin coches dentro
 	 */
 	public VentanaJuego() {
 		// Liberación de la ventana por defecto al cerrar
-		setDefaultCloseOperation( JFrame.DISPOSE_ON_CLOSE );
+		setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 		// Creación contenedores y componentes
 		pPrincipal = new JPanel();
 		JPanel pBotonera = new JPanel();
-		JButton bAcelerar = new JButton( "Acelera" );
-		JButton bFrenar = new JButton( "Frena" );
-		JButton bGiraIzq = new JButton( "Gira Izq." );
-		JButton bGiraDer = new JButton( "Gira Der." );
+		Mensaje = new JLabel (" ");
+		pBotonera.add(Mensaje);
+	    add(pBotonera, "South");
+		
 		// Formato y layouts
 		pPrincipal.setLayout( null );
 		pPrincipal.setBackground( Color.white );
 		// Añadido de componentes a contenedores
-		add( pPrincipal, BorderLayout.CENTER );
-		pBotonera.add( bAcelerar );
-		pBotonera.add( bFrenar );
-		pBotonera.add( bGiraIzq );
-		pBotonera.add( bGiraDer );
-		add( pBotonera, BorderLayout.SOUTH );
+		getContentPane().add( pPrincipal, BorderLayout.CENTER );
+		getContentPane().add( pBotonera, BorderLayout.SOUTH );
 		// Formato de ventana
 		setSize( 1000, 750 );
 		setResizable( false );
-		// Escuchadores de botones
-		bAcelerar.addActionListener( new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				miCoche.acelera( +10, 1 );
-				// System.out.println( "Nueva velocidad de coche: " + miCoche.getVelocidad() );
-			}
-		});
-		bFrenar.addActionListener( new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				miCoche.acelera( -10, 1 );
-				// System.out.println( "Nueva velocidad de coche: " + miCoche.getVelocidad() );
-			}
-		});
-		bGiraIzq.addActionListener( new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				miCoche.gira( +10 );
-				// System.out.println( "Nueva dirección de coche: " + miCoche.getDireccionActual() );
-			}
-		});
-		bGiraDer.addActionListener( new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				miCoche.gira( -10 );
-				// System.out.println( "Nueva dirección de coche: " + miCoche.getDireccionActual() );
-			}
-		});
 		
 		// Añadido para que también se gestione por teclado con el KeyListener
 		pPrincipal.addKeyListener( new KeyAdapter() {
@@ -178,16 +151,17 @@ public class VentanaJuego extends JFrame {
 	 */
 	class MiRunnable implements Runnable {
 		boolean sigo = true;
+		
 		@Override
 		public void run() {
-			 
+			
 			// Bucle principal forever hasta que se pare el juego...
 			while (sigo) {
 				 double fuerzaAceleracion = 0.0D;
 				// Mover coche
 				if (teclas[0] == true){
 					fuerzaAceleracion = VentanaJuego.this.miCoche.fuerzaAceleracionAdelante();
-					System.out.println(fuerzaAceleracion);
+
 					
 				}
 				else if (teclas[1]== true){
@@ -202,14 +176,37 @@ public class VentanaJuego extends JFrame {
 					miCoche.gira(-10);
 				}
 				miCoche.mueve( 0.040 );
+				
+				 int haperdido = miMundo.quitayRotaEstrellas(6000L);
+
+				 if (haperdido !=0){
+					 Mensaje.setText("Puntuacion: " + 10* estrellasquitadas + " Estrellas Perdidas: " + miMundo.estrellasperdidas);
+				 }
+				
+				miMundo.creaEstrella();
+			
 				// Chequear choques
+				
+				int haquitado = miMundo.ComprobarChoques();
+				if (haquitado !=0){
+					estrellasquitadas += haquitado;
+					Mensaje.setText("Puntuacion: " + 10* estrellasquitadas + " Estrellas Perdidas: " + miMundo.estrellasperdidas);
+				}
 				// (se comprueba tanto X como Y porque podría a la vez chocar en las dos direcciones (esquinas)
 				if (miMundo.hayChoqueHorizontal(miCoche)) // Espejo horizontal si choca en X
 					miMundo.rebotaHorizontal(miCoche);
 				if (miMundo.hayChoqueVertical(miCoche)) // Espejo vertical si choca en Y
 					miMundo.rebotaVertical(miCoche);
 				
-				miMundo.creaEstrella();
+				//Comprobamos las estrellas quitadas
+				
+				sigo = miMundo.Comprobar();
+				
+				if (!sigo){
+					Mensaje.setText("GRACIAS POR JUGAR, HA OBTENIDO: " + estrellasquitadas*10 + " puntos. ");
+				}
+
+				
 				// Dormir el hilo 40 milisegundos
 				try {
 					Thread.sleep( 40 );
@@ -220,8 +217,10 @@ public class VentanaJuego extends JFrame {
 		/** Ordena al hilo detenerse en cuanto sea posible
 		 */
 		public void acaba() {
-			sigo = false;
-		}
-	};
+		this.sigo = false;
 	
 }
+		
+	}
+}
+
